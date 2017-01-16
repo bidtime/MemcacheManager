@@ -16,7 +16,7 @@ public class MemcacheManage {
 
 	protected MemcachedClient memcacheClient;
 
-	protected int defaultTm = 2 * 60 * 60;// second;
+	protected int defaultTm = 2 * 60 * 60;// default: 2h = 7200s;
 
 	public int getDefaultTm() {
 		return defaultTm;
