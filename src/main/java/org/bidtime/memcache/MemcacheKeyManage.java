@@ -9,14 +9,18 @@ import org.apache.commons.lang.StringUtils;
  * 
  */
 public class MemcacheKeyManage extends AbstractMemcacheKeyManage {
+	
+	public MemcacheKeyManage(String userFlag) {
+		super(userFlag);
+	}
 
 	@Override
 	public String getKeyId(String key) {
-		if (StringUtils.isNotEmpty(userKeyFlag)) {
+		if (StringUtils.isNotEmpty(userFlag)) {
 			StringBuilder sb = new StringBuilder();
 			try {
-				sb.append(userKeyFlag);
 				sb.append(key);
+				sb.append(userFlag);
 				return sb.toString();
 			} finally {
 				sb.setLength(0);
@@ -29,11 +33,11 @@ public class MemcacheKeyManage extends AbstractMemcacheKeyManage {
 
 	@Override
 	public String getKeyId(String key, String ext) {
-		if (StringUtils.isNotEmpty(userKeyFlag)) {
+		if (StringUtils.isNotEmpty(userFlag)) {
 			StringBuilder sb = new StringBuilder();
 			try {
-				sb.append(userKeyFlag);
 				sb.append(key);
+				sb.append(userFlag);
 				sb.append(ext);
 				return sb.toString();
 			} finally {
@@ -44,5 +48,5 @@ public class MemcacheKeyManage extends AbstractMemcacheKeyManage {
 			return key;
 		}
 	}
-
+	
 }
