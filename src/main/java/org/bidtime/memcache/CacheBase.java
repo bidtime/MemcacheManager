@@ -107,14 +107,14 @@ public class CacheBase {
 		return value;
 	}
 
-	protected Object get(String key, int seconds) {
-		return get(key, seconds, false);
-	}
+//	protected Object get(String key, int seconds) {
+//		return this.get(key, seconds, false);
+//	}
 	
 	//     get string
 	
 	protected String getString(String key, int seconds) {
-		Object obj = get(key, seconds);
+		Object obj = get(key, seconds, false);
 		if (obj != null) {
 			return String.valueOf(obj);
 		} else {

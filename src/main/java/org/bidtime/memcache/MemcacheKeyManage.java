@@ -8,13 +8,20 @@ import org.apache.commons.lang.StringUtils;
  * @author jss
  * 
  */
-public abstract class MemcacheKeyManage extends CacheManage {
+public class MemcacheKeyManage extends CacheManage {
 	
-	public MemcacheKeyManage(String userFlag) {
-		this.userFlag = userFlag;
+	public MemcacheKeyManage() {
 	}
 
 	protected String userFlag;
+
+	public String getUserFlag() {
+		return userFlag;
+	}
+
+	public void setUserFlag(String userFlag) {
+		this.userFlag = userFlag;
+	}
 
 	@Override
 	public String getKeyId(String key) {

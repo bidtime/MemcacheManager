@@ -10,8 +10,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class MemcacheFlagKeyManage extends MemcacheKeyManage {
 	
-	public MemcacheFlagKeyManage(String userFlag) {
-		super(userFlag);
+	public MemcacheFlagKeyManage() {
 	}
 
 	@Override

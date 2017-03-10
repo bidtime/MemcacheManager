@@ -32,14 +32,14 @@ public class CacheManage extends CacheBase {
 	}
 
 	public void set(String key, Object value) {
-		this.set(key, defaultTm, value);
+		super.set(getKeyId(key), defaultTm, value);
 	}
 	
 	// replace
 	
-//	public void replace(String key, String ext, int seconds, Object value) {
-//		this.replace(getKeyId(key, ext), seconds, value);
-//	}
+	public void replace(String key, String ext, int seconds, Object value) {
+		super.replace(getKeyId(key, ext), seconds, value);
+	}
 
 	@Override
 	public void replace(String key, int seconds, Object value) {
@@ -47,7 +47,7 @@ public class CacheManage extends CacheBase {
 	}
 
 	public void replace(String key, Object value) {
-		this.replace(key, defaultTm, value);
+		super.replace(getKeyId(key), defaultTm, value);
 	}
 	
 	// get
@@ -57,13 +57,12 @@ public class CacheManage extends CacheBase {
 		return super.get(getKeyId(key), seconds, delete);
 	}
 	
-	@Override
 	public Object get(String key, int seconds) {
-		return super.get(getKeyId(key), seconds);
+		return super.get(getKeyId(key), this.defaultTm, false);
 	}
 
 	public Object get(String key, boolean delete) {
-		return this.get(key, this.defaultTm, delete);
+		return super.get(getKeyId(key), this.defaultTm, delete);
 	}
 
 	public Object get(String key, String ext, boolean delete) {
@@ -71,22 +70,17 @@ public class CacheManage extends CacheBase {
 	}
 
 	public Object get(String key, String ext) {
-		return super.get(getKeyId(key, ext), this.defaultTm);
+		return super.get(getKeyId(key, ext), this.defaultTm, false);
 	}
 
 	public Object get(String key) {
-		return this.get(key, this.defaultTm);
+		return super.get(getKeyId(key), this.defaultTm, false);
 	}
 	
 	// get string
 	
-	@Override
-	public String getString(String key, int seconds) {
-		return super.getString(getKeyId(key), seconds);
-	}
-	
 	public String getString(String key) {
-		return this.getString(key, this.defaultTm);
+		return super.getString(key, this.defaultTm);
 	}
 	
 	// delete
@@ -97,7 +91,15 @@ public class CacheManage extends CacheBase {
 	}
 	
 	public void delete(String key) {
-		this.delete(key, this.defaultTm);
+		super.delete(getKeyId(key), this.defaultTm);
+	}
+	
+	public void delete(String key, String ext) {
+		super.delete(getKeyId(key, ext), this.defaultTm);
+	}
+	
+	public void delete(String key, String ext, int seconds) {
+		super.delete(getKeyId(key, ext), seconds);
 	}
 	
 	// equals

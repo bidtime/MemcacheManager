@@ -8,16 +8,6 @@ public class MemcacheManage extends CacheManage {
 
 	// set
 	
-	public void set(String key, String ext, Object value) {
-		super.set(key + ext, value);
-	}
-	
-	public void set(String key, String ext, int seconds, Object value) {
-		super.set(key + ext, seconds, value);
-	}
-
-	//     set object
-	
 	public void set(Object id, Object value) {
 		super.set(String.valueOf(id), value);
 	}
@@ -27,20 +17,10 @@ public class MemcacheManage extends CacheManage {
 	}
 	
 	public void set(Object key, String ext, int seconds, Object value) {
-		super.set(String.valueOf(key) + ext, seconds, value);
+		super.set(String.valueOf(key), ext, seconds, value);
 	}
 	
 	// replace
-	
-	public void replace(String key, String ext, Object value) {
-		super.replace(key + ext, value);
-	}
-
-	public void replace(String key, String ext, int seconds, Object value) {
-		super.replace(key + ext, seconds, value);
-	}
-
-	//     replace object
 	
 	public void replace(Object id, Object value) {
 		super.replace(String.valueOf(id), value);
@@ -51,20 +31,11 @@ public class MemcacheManage extends CacheManage {
 	}
 	
 	public void replace(Object key, String ext, int seconds, Object value) {
-		super.replace(String.valueOf(key) + ext, seconds, value);
+		super.replace(String.valueOf(key), ext, seconds, value);
 	}
 	
 	// get
-	
-	public Object get(String key, String ext) {
-		return super.get(key + ext);
-	}
-		
-	public Object get(String key, String ext, boolean delete) {
-		return super.get(key + ext, delete);
-	}
-	
-	//     get object
+
 	public Object get(Object key) {
 		return super.get(String.valueOf(key));
 	}
@@ -74,13 +45,13 @@ public class MemcacheManage extends CacheManage {
 	}
 	
 	public Object get(Object key, String ext, boolean delete) {
-		return super.get(String.valueOf(key) + ext, delete);
+		return super.get(String.valueOf(key), ext, delete);
 	}
 	
 	// delete
 	
 	public void delete(String key, String ext) {
-		delete(key + ext);
+		delete(key, ext);
 	}
 
 	//     delete object
@@ -90,7 +61,7 @@ public class MemcacheManage extends CacheManage {
 	}
 	
 	public void delete(Object key, String ext) {
-		this.delete(String.valueOf(key) + ext);
+		this.delete(String.valueOf(key), ext);
 	}
 	
 	// dec
