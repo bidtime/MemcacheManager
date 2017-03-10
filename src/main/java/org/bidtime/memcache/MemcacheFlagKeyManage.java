@@ -8,7 +8,7 @@ import org.apache.commons.lang.StringUtils;
  * @author jss
  * 
  */
-public class MemcacheFlagKeyManage extends AbstractMemcacheKeyManage {
+public class MemcacheFlagKeyManage extends MemcacheKeyManage {
 	
 	public MemcacheFlagKeyManage(String userFlag) {
 		super(userFlag);

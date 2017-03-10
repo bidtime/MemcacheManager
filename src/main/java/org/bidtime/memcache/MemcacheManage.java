@@ -4,7 +4,7 @@ package org.bidtime.memcache;
  * 
  * jss
  */
-public class MemcacheManage extends CacheManageExt {
+public class MemcacheManage extends CacheManage {
 
 	// set
 	

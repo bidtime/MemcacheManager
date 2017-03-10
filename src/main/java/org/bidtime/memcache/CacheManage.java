@@ -1,228 +1,131 @@
 package org.bidtime.memcache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import net.spy.memcached.MemcachedClient;
-
 /**
  * 
  * jss
  */
-public class CacheManage {
+public class CacheManage extends CacheBase {
 
-	private static final Logger logger = LoggerFactory.getLogger(CacheManage.class);
-
-	private MemcachedClient memcacheClient;
-
-	// set
-		
-	public void set(String key, int seconds, Object value) {
-		try {
-			memcacheClient.set(key, seconds, value);
-			if (logger.isDebugEnabled()) {
-				StringBuffer sb = new StringBuffer();
-				try {
-					sb.append("set ");
-					sb.append(key);
-					sb.append(":");
-					sb.append(value);
-					sb.append(" tm(");
-					sb.append(seconds);
-					sb.append("s).");
-					logger.debug(sb.toString());
-				} finally {
-					sb.setLength(0); // 设置StringBuffer变量的长度为0
-					sb = null;
-				}
-			}
-		} catch (Exception e) {
-			logger.error("set:" + key, e);
-		}
+	protected int defaultTm = 2 * 60 * 60;		// default: 2h = 7200s;
+	
+	public String getKeyId(String key) {
+		return key;
 	}
 
-//	public void set(String id, Object value) {
-//		this.set(id, defaultTm, value);
-//	}
+	public String getKeyId(String key, String ext) {
+		return key + ext;
+	}
+
+	// set
+	
+	@Override
+	public void set(String key, int seconds, Object value) {
+		super.set(getKeyId(key), seconds, value);
+	}
+
+	public void set(String key, String ext, int seconds, Object value) {
+		super.set(getKeyId(key, ext), seconds, value);
+	}
+
+	public void set(String key, String ext, Object value) {
+		super.set(getKeyId(key, ext), defaultTm, value);
+	}
+
+	public void set(String key, Object value) {
+		this.set(key, defaultTm, value);
+	}
 	
 	// replace
 	
+//	public void replace(String key, String ext, int seconds, Object value) {
+//		this.replace(getKeyId(key, ext), seconds, value);
+//	}
+
+	@Override
 	public void replace(String key, int seconds, Object value) {
-		try {
-			memcacheClient.replace(key, seconds, value);
-			if (logger.isDebugEnabled()) {
-				StringBuffer sb = new StringBuffer();
-				try {
-					sb.append("replace ");
-					sb.append(key);
-					sb.append(":");
-					sb.append(value);
-					sb.append(" tm(");
-					sb.append(seconds);
-					sb.append("s).");
-					logger.debug(sb.toString());
-				} finally {
-					sb.setLength(0); // 设置StringBuffer变量的长度为0
-					sb = null;
-				}
-			}
-		} catch (Exception e) {
-			logger.error("replace:" + key, e);
-		}
+		super.replace(getKeyId(key), seconds, value);
 	}
 
-//	public void replace(String key, Object value) {
-//		this.replace(key, defaultTm, value);
-//	}
+	public void replace(String key, Object value) {
+		this.replace(key, defaultTm, value);
+	}
 	
 	// get
-
-	protected Object get(String key, int seconds, boolean delete) {
-		Object value = null;
-		try {
-			value = memcacheClient.get(key);
-			if (logger.isDebugEnabled()) {
-				StringBuilder sb = new StringBuilder();
-				try {
-					sb.append("get ");
-					sb.append(key);
-					sb.append(":");
-					sb.append(value);
-					sb.append(" tm(");
-					sb.append(seconds);
-					sb.append("s).");
-					logger.debug(sb.toString());
-				} finally {
-					sb.setLength(0); // 设置StringBuffer变量的长度为0
-					sb = null;
-				}
-			}
-		} catch (Exception e) {
-			logger.error("get:" + key, e);
-		} finally {
-			if (delete) {
-				delete(key, seconds);
-			}
-		}
-		return value;
-	}
-
-	protected Object get(String key, int seconds) {
-		return get(key, seconds, false);
+	
+	@Override
+	public Object get(String key, int seconds, boolean delete) {
+		return super.get(getKeyId(key), seconds, delete);
 	}
 	
-	//     get string
+	@Override
+	public Object get(String key, int seconds) {
+		return super.get(getKeyId(key), seconds);
+	}
+
+	public Object get(String key, boolean delete) {
+		return this.get(key, this.defaultTm, delete);
+	}
+
+	public Object get(String key, String ext, boolean delete) {
+		return super.get(getKeyId(key, ext), this.defaultTm, delete);
+	}
+
+	public Object get(String key, String ext) {
+		return super.get(getKeyId(key, ext), this.defaultTm);
+	}
+
+	public Object get(String key) {
+		return this.get(key, this.defaultTm);
+	}
 	
-	protected String getString(String key, int seconds) {
-		Object obj = get(key, seconds);
-		if (obj != null) {
-			return String.valueOf(obj);
-		} else {
-			return null;
-		}
+	// get string
+	
+	@Override
+	public String getString(String key, int seconds) {
+		return super.getString(getKeyId(key), seconds);
+	}
+	
+	public String getString(String key) {
+		return this.getString(key, this.defaultTm);
 	}
 	
 	// delete
 	
-	protected void delete(String key, int seconds) {
-		try {
-			memcacheClient.delete(key);
-			if (logger.isDebugEnabled()) {
-				StringBuilder sb = new StringBuilder();
-				try {
-					sb.append("get ");
-					sb.append(key);
-					sb.append(" tm(");
-					sb.append(seconds);
-					sb.append("s).");
-					logger.debug(sb.toString());
-					logger.debug(sb.toString());
-				} finally {
-					sb.setLength(0); // 设置StringBuffer变量的长度为0
-					sb = null;
-				}
-			}
-		} catch (Exception e) {
-			logger.error("delete:" + key, e);
-		}
+	@Override
+	public void delete(String key, int seconds) {
+		super.delete(getKeyId(key), seconds);
+	}
+	
+	public void delete(String key) {
+		this.delete(key, this.defaultTm);
 	}
 	
 	// equals
 	
-    protected static boolean isNotEmpty(String str) {
-        return !isEmpty(str);
-    }
-	
-    protected static boolean isEmpty(String str) {
-        return str == null || str.length() == 0;
-    }
-	
-    protected boolean equalsWithoutEmpty(String key, String newValue, int seconds) {
-		String oldVal = getString(key, seconds);
-		if ( isNotEmpty(oldVal) ) {
-			return oldVal.equals(newValue);
-		} else {
-			return false;
-		}
-	}
-
-    protected boolean equalsIgnoreCaseWithoutEmpty(String key, String newValue, int seconds) {
-		String oldVal = getString(key, seconds);
-		if ( isNotEmpty(oldVal) ) {
-			return oldVal.equalsIgnoreCase(newValue);
-		} else {
-			return false;
-		}
-	}
-	
-    protected static boolean eq(String str1, String str2) {
-        return str1 == null ? str2 == null : str1.equals(str2);
-    }
-    
-    protected static boolean eqIgnoreCase(String str1, String str2) {
-        return str1 == null ? str2 == null : str1.equalsIgnoreCase(str2);
-    }
-
-    protected boolean equals(String key, String value, int seconds) {
-		return eq(getString(key, seconds), value);
-	}
-
-    protected boolean equalsIgnoreCase(String key, String value, int seconds) {
-		return eqIgnoreCase(getString(key, seconds), value);
-	}
-
-    public boolean equals(String key, String value, boolean allowEmpty, int seconds) {
+    public boolean equals(String key, String value, boolean allowEmpty) {
     	if (allowEmpty) {
-    		return equals(key, value, seconds);
+    		return equals(key, value, this.defaultTm);
     	} else {
-    		return equalsWithoutEmpty(key, value, seconds);    		
+    		return equalsWithoutEmpty(key, value, this.defaultTm);    		
     	}
     }
     
-    public boolean equalsIgnoreCase(String key, String value, boolean allowEmpty, int seconds) {
+    public boolean equalsIgnoreCase(String key, String value, boolean allowEmpty) {
     	if (allowEmpty) {
-    		return equalsIgnoreCase(key, value, seconds);
+    		return equalsIgnoreCase(key, value, this.defaultTm);
     	} else {
-    		return equalsIgnoreCaseWithoutEmpty(key, value, seconds);    		
+    		return equalsIgnoreCaseWithoutEmpty(key, value, this.defaultTm);    		
     	}
     }
 	
-	//
-//
-//	public int getDefaultTm() {
-//		return defaultTm;
-//	}
-//
-//	public void setDefaultTm(int defaultTm) {
-//		this.defaultTm = defaultTm;
-//	}
+	// defaultTm
 
-	public MemcachedClient getMemcacheClient() {
-		return memcacheClient;
+	public int getDefaultTm() {
+		return defaultTm;
 	}
 
-	public void setMemcacheClient(MemcachedClient memcacheClient) {
-		this.memcacheClient = memcacheClient;
+	public void setDefaultTm(int defaultTm) {
+		this.defaultTm = defaultTm;
 	}
 
 }
