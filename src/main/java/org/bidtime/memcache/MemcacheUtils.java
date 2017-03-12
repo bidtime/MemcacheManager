@@ -9,17 +9,15 @@ import net.spy.memcached.MemcachedClient;
  * 
  * jss
  */
-public class CacheBase {
+public class MemcacheUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(CacheBase.class);
-
-	private MemcachedClient memcacheClient;
+	private static final Logger logger = LoggerFactory.getLogger(MemcacheUtils.class);
 
 	// set
-		
-	public void set(String key, int seconds, Object value) {
+	
+	public static void set(MemcachedClient cacheClient, String key, int seconds, Object value) {
 		try {
-			memcacheClient.set(key, seconds, value);
+			cacheClient.set(key, seconds, value);
 			if (logger.isDebugEnabled()) {
 				StringBuffer sb = new StringBuffer();
 				try {
@@ -37,7 +35,7 @@ public class CacheBase {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("set:" + key, e);
+			logger.error("set: key{}, {}", key, e);
 		}
 	}
 
@@ -47,9 +45,9 @@ public class CacheBase {
 	
 	// replace
 	
-	public void replace(String key, int seconds, Object value) {
+	public static void replace(MemcachedClient cacheClient, String key, int seconds, Object value) {
 		try {
-			memcacheClient.replace(key, seconds, value);
+			cacheClient.replace(key, seconds, value);
 			if (logger.isDebugEnabled()) {
 				StringBuffer sb = new StringBuffer();
 				try {
@@ -67,7 +65,7 @@ public class CacheBase {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("replace:" + key, e);
+			logger.error("replace: key{}, {}", key, e);
 		}
 	}
 
@@ -77,10 +75,14 @@ public class CacheBase {
 	
 	// get
 
-	protected Object get(String key, int seconds, boolean delete) {
+	protected static Object get(MemcachedClient cacheClient, String key) {
+		return get(cacheClient, key);
+	}
+	
+	protected static Object get(MemcachedClient cacheClient, String key, boolean delete) {
 		Object value = null;
 		try {
-			value = memcacheClient.get(key);
+			value = cacheClient.get(key);
 			if (logger.isDebugEnabled()) {
 				StringBuilder sb = new StringBuilder();
 				try {
@@ -88,9 +90,6 @@ public class CacheBase {
 					sb.append(key);
 					sb.append(":");
 					sb.append(value);
-					sb.append(" tm(");
-					sb.append(seconds);
-					sb.append("s).");
 					logger.debug(sb.toString());
 				} finally {
 					sb.setLength(0); // 设置StringBuffer变量的长度为0
@@ -98,23 +97,23 @@ public class CacheBase {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("get:" + key, e);
+			logger.error("get: key{}, {}", key, e);
 		} finally {
 			if (delete) {
-				delete(key, seconds);
+				delete(cacheClient, key);
 			}
 		}
 		return value;
 	}
-
-//	protected Object get(String key, int seconds) {
-//		return this.get(key, seconds, false);
-//	}
 	
 	//     get string
 	
-	protected String getString(String key, int seconds) {
-		Object obj = get(key, seconds, false);
+	protected static String getString(MemcachedClient cacheClient, String key) {
+		return getString(cacheClient, key, false);
+	}
+	
+	protected static String getString(MemcachedClient cacheClient, String key, boolean delete) {
+		Object obj = get(cacheClient, key, delete);
 		if (obj != null) {
 			return String.valueOf(obj);
 		} else {
@@ -124,18 +123,14 @@ public class CacheBase {
 	
 	// delete
 	
-	protected void delete(String key, int seconds) {
+	protected static void delete(MemcachedClient cacheClient, String key) {
 		try {
-			memcacheClient.delete(key);
+			cacheClient.delete(key);
 			if (logger.isDebugEnabled()) {
 				StringBuilder sb = new StringBuilder();
 				try {
-					sb.append("get ");
+					sb.append("delete ");
 					sb.append(key);
-					sb.append(" tm(");
-					sb.append(seconds);
-					sb.append("s).");
-					logger.debug(sb.toString());
 					logger.debug(sb.toString());
 				} finally {
 					sb.setLength(0); // 设置StringBuffer变量的长度为0
@@ -143,7 +138,7 @@ public class CacheBase {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("delete:" + key, e);
+			logger.error("delete: key{}, {}", key, e);
 		}
 	}
 	
@@ -157,8 +152,8 @@ public class CacheBase {
         return str == null || str.length() == 0;
     }
 	
-    protected boolean equalsWithoutEmpty(String key, String newValue, int seconds) {
-		String oldVal = getString(key, seconds);
+    protected static boolean equalsWithoutEmpty(MemcachedClient cacheClient, String key, String newValue) {
+		String oldVal = getString(cacheClient, key);
 		if ( isNotEmpty(oldVal) ) {
 			return oldVal.equals(newValue);
 		} else {
@@ -166,8 +161,8 @@ public class CacheBase {
 		}
 	}
 
-    protected boolean equalsIgnoreCaseWithoutEmpty(String key, String newValue, int seconds) {
-		String oldVal = getString(key, seconds);
+    protected static boolean equalsIgnoreCaseWithoutEmpty(MemcachedClient cacheClient, String key, String newValue) {
+		String oldVal = getString(cacheClient, key);
 		if ( isNotEmpty(oldVal) ) {
 			return oldVal.equalsIgnoreCase(newValue);
 		} else {
@@ -183,46 +178,28 @@ public class CacheBase {
         return str1 == null ? str2 == null : str1.equalsIgnoreCase(str2);
     }
 
-    protected boolean equals(String key, String value, int seconds) {
-		return eq(getString(key, seconds), value);
+    protected static boolean equals(MemcachedClient cacheClient, String key, String value) {
+		return eq(getString(cacheClient, key), value);
 	}
 
-    protected boolean equalsIgnoreCase(String key, String value, int seconds) {
-		return eqIgnoreCase(getString(key, seconds), value);
+    protected static boolean equalsIgnoreCase(MemcachedClient cacheClient, String key, String value) {
+		return eqIgnoreCase(getString(cacheClient, key), value);
 	}
 
-    public boolean equals(String key, String value, boolean allowEmpty, int seconds) {
+    public static boolean equals(MemcachedClient cacheClient, String key, String value, boolean allowEmpty) {
     	if (allowEmpty) {
-    		return equals(key, value, seconds);
+    		return equals(cacheClient, key, value);
     	} else {
-    		return equalsWithoutEmpty(key, value, seconds);    		
+    		return equalsWithoutEmpty(cacheClient, key, value);    		
     	}
     }
     
-    public boolean equalsIgnoreCase(String key, String value, boolean allowEmpty, int seconds) {
+    public static boolean equalsIgnoreCase(MemcachedClient cacheClient, String key, String value, boolean allowEmpty) {
     	if (allowEmpty) {
-    		return equalsIgnoreCase(key, value, seconds);
+    		return equalsIgnoreCase(cacheClient, key, value);
     	} else {
-    		return equalsIgnoreCaseWithoutEmpty(key, value, seconds);    		
+    		return equalsIgnoreCaseWithoutEmpty(cacheClient, key, value);    		
     	}
     }
-	
-	//
-//
-//	public int getDefaultTm() {
-//		return defaultTm;
-//	}
-//
-//	public void setDefaultTm(int defaultTm) {
-//		this.defaultTm = defaultTm;
-//	}
-
-	public MemcachedClient getMemcacheClient() {
-		return memcacheClient;
-	}
-
-	public void setMemcacheClient(MemcachedClient memcacheClient) {
-		this.memcacheClient = memcacheClient;
-	}
 
 }
