@@ -76,7 +76,7 @@ public class MemcacheUtils {
 	// get
 
 	protected static Object get(MemcachedClient cacheClient, String key) {
-		return get(cacheClient, key);
+		return get(cacheClient, key, false);
 	}
 	
 	protected static Object get(MemcachedClient cacheClient, String key, boolean delete) {
