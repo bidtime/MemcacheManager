@@ -201,5 +201,90 @@ public class MemcacheUtils {
     		return equalsIgnoreCaseWithoutEmpty(cacheClient, key, value);    		
     	}
     }
+	
+	// dec
+	
+	public void dec(MemcachedClient cacheClient, String key, int seconds) {
+		inc(cacheClient, key, seconds, -1);
+	}
+	
+	public void dec(MemcachedClient cacheClient, String key, String ext, int seconds) {
+		inc(cacheClient, key, ext, seconds, -1);
+	}
+	
+	public void dec(MemcachedClient cacheClient, String key, String ext, int seconds, int var) {
+		inc(cacheClient, key, ext, seconds, -var);
+	}
+
+	// inc
+	
+	public void inc(MemcachedClient cacheClient, String key, int seconds) {
+		inc(cacheClient, key, seconds, 1);
+	}
+	
+	public void inc(MemcachedClient cacheClient, String key, String ext, int seconds) {
+		inc(cacheClient, key, ext, seconds, 1);
+	}
+
+	public void inc(MemcachedClient cacheClient, String key, String ext, int seconds, int var) {
+		this.inc(cacheClient, key + ext, seconds, var);
+	}
+	
+	//     inc raw
+	
+	public void inc(MemcachedClient cacheClient, String key, int seconds, int var) {
+		Object value = get(cacheClient, key);
+		if (value == null) {
+			set(cacheClient, key, seconds, var);
+		} else {
+			if (value instanceof Integer) {
+				set(cacheClient, key, seconds, (Integer) value + var);
+			} else if (value instanceof Long) {
+				set(cacheClient, key, seconds, (Long) value + var);
+			} else if (value instanceof Short) {
+				set(cacheClient, key, seconds, (Short) value + var);
+			} else if (value instanceof Double) {
+				set(cacheClient, key, seconds, (Double) value + var);
+			} else if (value instanceof Float) {
+				set(cacheClient, key, seconds, (Float) value + var);
+			} else {
+				int n = Integer.parseInt(String.valueOf(value));
+				set(cacheClient, key, seconds, n + var);
+			}
+		}
+	}
+
+	public Integer getInteger(MemcachedClient cacheClient, String key) {
+		Object value = get(cacheClient, key);
+		if (value != null) {
+			if (value instanceof Number) {
+				return ((Number) value).intValue();
+			} else {
+				return Integer.parseInt(String.valueOf(value));
+			}
+		} else {
+			return null;
+		}
+	}
+
+	// compareTo
+
+	public int compareTo(MemcachedClient cacheClient, String key, Integer value) {
+		Integer oldVal = getInteger(cacheClient, key);
+		if (oldVal != null) {
+			return oldVal.compareTo(value);
+		} else {
+			return -1;
+		}
+	}
+
+	public int compareTo(MemcachedClient cacheClient, String key, int value) {
+		Integer oldVal = getInteger(cacheClient, key);
+		if (oldVal != null) {
+			return oldVal.compareTo(value);
+		} else {
+			return -1;
+		}
+	}
 
 }

@@ -19,6 +19,14 @@ public class CacheManage {
 	public String getKeyId(String key, String ext) {
 		return key + ext;
 	}
+	
+//	public String getKeyId(Object key) {
+//		return String.valueOf(key);
+//	}
+//
+//	public String getKeyId(Object key, String ext) {
+//		return String.valueOf(key) + ext;
+//	}
 
 	// set
 	
@@ -117,6 +125,91 @@ public class CacheManage {
     		return MemcacheUtils.equalsIgnoreCaseWithoutEmpty(memcacheClient, getKeyId(key), value);    		
     	}
     }
+	
+	// dec
+	
+	public void dec(String key) {
+		inc(key, -1);
+	}
+	
+	public void dec(String key, String ext) {
+		inc(key, ext, -1);
+	}
+	
+	public void dec(String key, String ext, int var) {
+		inc(key, ext, -var);
+	}
+
+	// inc
+	
+	public void inc(String key) {
+		inc(key, 1);
+	}
+	
+	public void inc(String key, String ext) {
+		inc(key, ext, 1);
+	}
+
+	public void inc(String key, String ext, int var) {
+		this.inc(key + ext, var);
+	}
+	
+	//     inc raw
+	
+	public void inc(String key, int var) {
+		Object value = get(key);
+		if (value == null) {
+			set(key, var);
+		} else {
+			if (value instanceof Integer) {
+				set(key, (Integer) value + var);
+			} else if (value instanceof Long) {
+				set(key, (Long) value + var);
+			} else if (value instanceof Short) {
+				set(key, (Short) value + var);
+			} else if (value instanceof Double) {
+				set(key, (Double) value + var);
+			} else if (value instanceof Float) {
+				set(key, (Float) value + var);
+			} else {
+				int n = Integer.parseInt(String.valueOf(value));
+				set(key, n + var);
+			}
+		}
+	}
+
+	public Integer getInteger(String key) {
+		Object value = get(key);
+		if (value != null) {
+			if (value instanceof Number) {
+				return ((Number) value).intValue();
+			} else {
+				return Integer.parseInt(String.valueOf(value));
+			}
+		} else {
+			return null;
+		}
+	}
+
+	// compareTo
+
+	public int compareTo(String key, Integer value) {
+		Integer oldVal = getInteger(key);
+		if (oldVal != null) {
+			return oldVal.compareTo(value);
+		} else {
+			return -1;
+		}
+	}
+
+	public int compareTo(String key, int value) {
+		Integer oldVal = getInteger(key);
+		if (oldVal != null) {
+			return oldVal.compareTo(value);
+		} else {
+			return -1;
+		}
+	}
 	
 	// defaultTm
 
