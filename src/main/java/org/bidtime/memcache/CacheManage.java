@@ -11,118 +11,115 @@ public class CacheManage {
 	private MemcachedClient memcacheClient;
 	
 	protected int defaultTm = 2 * 60 * 60;		// default: 2h = 7200s;
-	
-	public String getKeyId(String key) {
-		return key;
-	}
 
 	public String getKeyId(String key, String ext) {
 		return key + ext;
 	}
 	
-//	public String getKeyId(Object key) {
-//		return String.valueOf(key);
-//	}
-//
-//	public String getKeyId(Object key, String ext) {
-//		return String.valueOf(key) + ext;
-//	}
-
 	// set
 	
 	public void set(String key, int seconds, Object value) {
-		MemcacheUtils.set(memcacheClient, getKeyId(key), seconds, value);
+		MemcacheUtils.set(memcacheClient, key, seconds, value);
 	}
 
 	public void set(String key, Object value) {
-		MemcacheUtils.set(memcacheClient, getKeyId(key), defaultTm, value);
+		this.set(key, defaultTm, value);
 	}
 
 	public void set(String key, String ext, int seconds, Object value) {
-		MemcacheUtils.set(memcacheClient, getKeyId(key, ext), seconds, value);
+		this.set(getKeyId(key, ext), seconds, value);
 	}
 
 	public void set(String key, String ext, Object value) {
-		MemcacheUtils.set(memcacheClient, getKeyId(key, ext), defaultTm, value);
+		this.set(key, ext, defaultTm, value);
 	}
 	
 	// replace
 
 	public void replace(String key, int seconds, Object value) {
-		MemcacheUtils.replace(memcacheClient, getKeyId(key), seconds, value);
+		MemcacheUtils.replace(memcacheClient, key, seconds, value);
 	}
 
 	public void replace(String key, Object value) {
-		MemcacheUtils.replace(memcacheClient, getKeyId(key), defaultTm, value);
+		this.replace(key, defaultTm, value);
 	}
 	
 	public void replace(String key, String ext, int seconds, Object value) {
-		MemcacheUtils.replace(memcacheClient, getKeyId(key, ext), seconds, value);
+		this.replace(getKeyId(key, ext), seconds, value);
 	}
 	
 	public void replace(String key, String ext, Object value) {
-		MemcacheUtils.replace(memcacheClient, getKeyId(key, ext), defaultTm, value);
+		this.replace(key, ext, defaultTm, value);
 	}
 	
 	// get
 
 	public Object get(String key, boolean delete) {
-		return MemcacheUtils.get(memcacheClient, getKeyId(key), delete);
+		return MemcacheUtils.get(memcacheClient, key, delete);
 	}
 
 	public Object get(String key) {
-		return MemcacheUtils.get(memcacheClient, getKeyId(key));
+		return this.get(key, false);
 	}
 	
 	//      get ext
 
 	public Object get(String key, String ext, boolean delete) {
-		return MemcacheUtils.get(memcacheClient, getKeyId(key, ext), delete);
+		return this.get(getKeyId(key, ext), delete);
 	}
 
 	public Object get(String key, String ext) {
-		return MemcacheUtils.get(memcacheClient, getKeyId(key, ext), false);
+		return this.get(key, ext, false);
 	}
 	
-	// get string
+	//     get string
 	
-	public String getString(String key) {
-		return MemcacheUtils.getString(memcacheClient, getKeyId(key));
+	protected String getString(String key) {
+		return getString(key, false);
+	}
+	
+	protected String getString(String key, boolean delete) {
+		Object obj = get(key, delete);
+		if (obj != null) {
+			return String.valueOf(obj);
+		} else {
+			return null;
+		}
 	}
 	
 	// delete
 	
 	public void delete(String key) {
-		MemcacheUtils.delete(memcacheClient, getKeyId(key));
+		MemcacheUtils.delete(memcacheClient, key);
 	}
 	
 	public void delete(String key, String ext) {
-		MemcacheUtils.delete(memcacheClient, getKeyId(key, ext));
+		delete(getKeyId(key, ext));
 	}
 	
 	// equals
 	
     public boolean equals(String key, String value) {
-    	return MemcacheUtils.equals(memcacheClient, getKeyId(key), value);
+		return MemcacheUtils.eq(getString(key), value);
     }
     
-    public boolean equals(String key, String value, boolean allowEmpty) {
+    public boolean equals(String key, String newValue, boolean allowEmpty) {
     	if (allowEmpty) {
-    		return MemcacheUtils.equals(memcacheClient, getKeyId(key), value);
+    		return equals(key, newValue);
     	} else {
-    		return MemcacheUtils.equalsWithoutEmpty(memcacheClient, getKeyId(key), value);    		
+    		return MemcacheUtils.equalsWithoutEmpty(getString(key), newValue);
     	}
     }
     
     public boolean equalsIgnoreCase(String key, String value) {
-    	return MemcacheUtils.equalsIgnoreCase(memcacheClient, getKeyId(key), value);
+    	return MemcacheUtils.eqIgnoreCase(getString(key), value);
     }
     
-    public boolean equalsIgnoreCase(String key, String value, boolean allowEmpty) {
+    public boolean equalsIgnoreCase(String key, String newValue, boolean allowEmpty) {
     	if (allowEmpty) {
-    		return MemcacheUtils.equalsIgnoreCase(memcacheClient, getKeyId(key), value);
+    		return equalsIgnoreCase(key, newValue);
     	} else {
-    		return MemcacheUtils.equalsIgnoreCaseWithoutEmpty(memcacheClient, getKeyId(key), value);    		
+    		return MemcacheUtils.equalsIgnoreCaseWithoutEmpty(getString(key), newValue);
     	}
     }
 	

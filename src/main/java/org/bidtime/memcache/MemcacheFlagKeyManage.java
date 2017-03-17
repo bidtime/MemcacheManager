@@ -9,9 +9,6 @@ import org.apache.commons.lang.StringUtils;
  * 
  */
 public class MemcacheFlagKeyManage extends MemcacheKeyManage {
-	
-	public MemcacheFlagKeyManage() {
-	}
 
 	@Override
 	public String getKeyId(String key) {

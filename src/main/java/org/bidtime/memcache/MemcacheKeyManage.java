@@ -9,9 +9,6 @@ import org.apache.commons.lang.StringUtils;
  * 
  */
 public class MemcacheKeyManage extends CacheManage {
-	
-	public MemcacheKeyManage() {
-	}
 
 	protected String userFlag;
 
@@ -23,7 +20,6 @@ public class MemcacheKeyManage extends CacheManage {
 		this.userFlag = userFlag;
 	}
 
-	@Override
 	public String getKeyId(String key) {
 		if (StringUtils.isNotEmpty(userFlag)) {
 			StringBuilder sb = new StringBuilder();
@@ -58,12 +54,32 @@ public class MemcacheKeyManage extends CacheManage {
 		}
 	}
 
-	public String getKeyId(Object key) {
-		return this.getKeyId(String.valueOf(key));
+//	public String getKeyId(Object key) {
+//		return this.getKeyId(String.valueOf(key));
+//	}
+//	
+//	public String getKeyId(Object key, String ext) {
+//		return this.getKeyId(String.valueOf(key), ext);
+//	}
+	
+	@Override
+	public void set(String key, int seconds, Object value) {
+		super.set(getKeyId(key), seconds, value);
 	}
 	
-	public String getKeyId(Object key, String ext) {
-		return this.getKeyId(String.valueOf(key), ext);
+	@Override
+	public void replace(String key, int seconds, Object value) {
+		super.replace(getKeyId(key), seconds, value);
+	}
+	
+	@Override
+	public Object get(String key, boolean delete) {
+		return super.get(getKeyId(key), false);
+	}
+	
+	@Override
+	public void delete(String key) {
+		super.delete(getKeyId(key));
 	}
 
 }
