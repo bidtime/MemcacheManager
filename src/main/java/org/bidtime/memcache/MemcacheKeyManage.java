@@ -9,15 +9,9 @@ import org.apache.commons.lang.StringUtils;
  * 
  */
 public class MemcacheKeyManage extends CacheManage {
-
-	protected String userFlag;
-
-	public String getUserFlag() {
-		return userFlag;
-	}
-
-	public void setUserFlag(String userFlag) {
-		this.userFlag = userFlag;
+	
+	public MemcacheKeyManage() {
+		
 	}
 
 	public String getKeyId(String key) {
@@ -80,6 +74,16 @@ public class MemcacheKeyManage extends CacheManage {
 	@Override
 	public void delete(String key) {
 		super.delete(getKeyId(key));
+	}
+
+	protected String userFlag;
+
+	public String getUserFlag() {
+		return userFlag;
+	}
+
+	public void setUserFlag(String userFlag) {
+		this.userFlag = userFlag;
 	}
 
 }

@@ -11,6 +11,10 @@ public class CacheManage {
 	private MemcachedClient memcacheClient;
 	
 	protected int defaultTm = 2 * 60 * 60;		// default: 2h = 7200s;
+	
+	public CacheManage() {
+		
+	}
 
 	public String getKeyId(String key, String ext) {
 		return key + ext;
