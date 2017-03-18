@@ -47,14 +47,6 @@ public class MemcacheKeyManage extends CacheManage {
 			return key;
 		}
 	}
-
-//	public String getKeyId(Object key) {
-//		return this.getKeyId(String.valueOf(key));
-//	}
-//	
-//	public String getKeyId(Object key, String ext) {
-//		return this.getKeyId(String.valueOf(key), ext);
-//	}
 	
 	@Override
 	public void set(String key, int seconds, Object value) {
