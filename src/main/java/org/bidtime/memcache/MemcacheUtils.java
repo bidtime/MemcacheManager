@@ -159,6 +159,14 @@ public class MemcacheUtils {
 			return false;
 		}
 	}
+    
+	public static boolean notEquals(String oldValue, String newValue) {
+		if ( isNotEmpty(oldValue) ) {
+			return !oldValue.equals(newValue);
+		} else {
+			return false;
+		}
+	}
 
     protected static boolean equalsIgnoreCaseWithoutEmpty(String oldValue, String newValue) {
 		if ( isNotEmpty(oldValue) ) {

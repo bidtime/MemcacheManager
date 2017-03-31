@@ -78,11 +78,11 @@ public class CacheManage {
 	
 	//     get string
 	
-	protected String getString(String key) {
+	public String getString(String key) {
 		return getString(key, false);
 	}
 	
-	protected String getString(String key, boolean delete) {
+	public String getString(String key, boolean delete) {
 		Object obj = get(key, delete);
 		if (obj != null) {
 			return String.valueOf(obj);
@@ -107,11 +107,23 @@ public class CacheManage {
 		return MemcacheUtils.eq(getString(key), value);
     }
     
+    public boolean notEquals(String key, String value) {
+		return !MemcacheUtils.eq(getString(key), value);
+    }
+    
     public boolean equals(String key, String newValue, boolean allowEmpty) {
     	if (allowEmpty) {
     		return equals(key, newValue);
     	} else {
     		return MemcacheUtils.equalsWithoutEmpty(getString(key), newValue);
+    	}
+    }
+    
+    public boolean notEquals(String key, String newValue, boolean allowEmpty) {
+    	if (allowEmpty) {
+    		return notEquals(key, newValue);
+    	} else {
+    		return MemcacheUtils.notEquals(getString(key), newValue);
     	}
     }
     
