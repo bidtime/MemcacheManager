@@ -84,11 +84,7 @@ public class CacheManage {
 	
 	public String getString(String key, boolean delete) {
 		Object obj = get(key, delete);
-		if (obj != null) {
-			return String.valueOf(obj);
-		} else {
-			return null;
-		}
+		return String.valueOf( obj );
 	}
 	
 	// delete
